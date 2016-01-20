@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_test',
-        'USER': 'django_test',
-        'PASSWORD': 'q1w2e3r4',
+        'USER': 'root',
+        'PASSWORD': '1',
         'HOST': 'localhost'
     }
 }
