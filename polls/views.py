@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.views import generic
 
 from .models import Choice, Question
 
@@ -15,14 +16,19 @@ def ping(req):
     return HttpResponse('PONG')
 
 
-def detail(req, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    return render(req, 'polls/detail.html', {'question': question})
+class IndexView(generic.ListView):
+    def get_queryset(self):
+        """Return the last five published questions"""
+        return Question.objects.order_by('-pub_date')[:5]
 
 
-def results(req, question_id):
-    return render(req, 'polls/results.html',
-                  {'question': get_object_or_404(Question, pk=question_id)})
+class DetailView(generic.DetailView):
+    model = Question
+
+
+class ResultsView(generic.DeleteView):
+    model = Question
+    template_name = 'polls/results.html'
 
 
 def vote(req, question_id):
@@ -31,7 +37,7 @@ def vote(req, question_id):
         selected = question.choice_set.get(pk=req.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         # KeyError is returned when no POST['choice'] exists
-        return render(req, 'polls/detail.html', {
+        return render(req, 'polls/question_detail.html', {
             'question': question,
             'error': "You did not select a valid answer!"
             }
