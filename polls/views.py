@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
@@ -36,7 +37,7 @@ def vote(req, question_id):
             }
         )
     else:  # did not except
-        selected.votes += 1
+        selected.votes = F('votes') + 1
         selected.save()
         return HttpResponseRedirect(reverse('polls:results',
                                     args=(question.id,)))
