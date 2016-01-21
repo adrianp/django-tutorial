@@ -1,9 +1,62 @@
 import datetime
 
+from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.test import TestCase
 
 from .models import Question
+
+
+def create_question(text='', days=1, hours=0):
+    """
+    Creates a question with the given text and published date offset as
+    specified by the days and hours aguments.
+    """
+    date = timezone.now() + datetime.timedelta(days=days, hours=hours)
+    return Question.objects.create(question_text=text, pub_date=date)
+
+
+class QuestionsViewTest(TestCase):
+    def test_index_view_with_no_arguments(self):
+        """
+        An appropiate message should be displayed when no questions are
+        available
+        """
+        response = self.client.get(reverse('polls:index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context['question_list'], [])
+
+    def test_index_view_with_a_future_question(self):
+        """
+        Should not display future questions
+        """
+        create_question()
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(response.context['question_list'], [])
+
+    def test_index_view_with_future_question_and_past_question(self):
+        """
+        Should display past question but not the future one
+        """
+        create_question('future?', 365)
+        create_question('foo?', -1)
+        response = self.client.get(reverse('polls:index'))
+        questions = response.context['question_list']
+        self.assertEquals(len(questions), 1)
+        self.assertEquals(questions[0].question_text, 'foo?')
+
+    def test_index_view_with_two_past_questions(self):
+        """
+        Should display past questions but no future ones
+        """
+        create_question('future?', 0, 1)
+        create_question('foo?', -1, 23)
+        create_question('bar?', 0, -1)
+        response = self.client.get(reverse('polls:index'))
+        questions = response.context['question_list']
+        self.assertEquals(len(questions), 2)
+        self.assertEquals(questions[0].question_text, 'bar?')
+        pass
 
 
 class QuestionMethodTests(TestCase):
