@@ -19,9 +19,9 @@ def detail(req, question_id):
     return render(req, 'polls/detail.html', {'question': question})
 
 
-def result(req, question_id):
-    return HttpResponse('You are looking at the results of question %s' %
-                        question_id)
+def results(req, question_id):
+    return render(req, 'polls/results.html',
+                  {'question': get_object_or_404(Question, pk=question_id)})
 
 
 def vote(req, question_id):
@@ -29,6 +29,7 @@ def vote(req, question_id):
     try:
         selected = question.choice_set.get(pk=req.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
+        # KeyError is returned when no POST['choice'] exists
         return render(req, 'polls/detail.html', {
             'question': question,
             'error': "You did not select a valid answer!"
