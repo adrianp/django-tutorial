@@ -16,6 +16,19 @@ def create_question(text='', days=1, hours=0):
     return Question.objects.create(question_text=text, pub_date=date)
 
 
+class QuestionViewIndex(TestCase):
+    def test_detail_view_with_a_future_question(self):
+        qid = create_question().id
+        response = self.client.get(reverse('polls:detail', args=(qid,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_detail_view_with_a_past_question(self):
+        qid = create_question('baz?', 0, -12).id
+        response = self.client.get(reverse('polls:detail', args=(qid,)))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'baz?')
+
+
 class QuestionsViewTest(TestCase):
     def test_index_view_with_no_arguments(self):
         """
