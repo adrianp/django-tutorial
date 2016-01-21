@@ -3,6 +3,7 @@ from django.db.models import F
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 from django.views import generic
 
 from .models import Choice, Question
@@ -45,7 +46,7 @@ def vote(req, question_id):
         # KeyError is returned when no POST['choice'] exists
         return render(req, 'polls/question_detail.html', {
             'question': question,
-            'error': "You did not select a valid answer!"
+            'error': _("You did not select a valid answer!")
             }
         )
     else:  # did not except
