@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions'
+    'django_extensions',
+    'django_nose'
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -127,3 +128,11 @@ STATIC_URL = '/static/'
 
 # use iPython for shell_plus
 SHELL_PLUS = 'ipython'
+
+# use nose for running tests
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['--verbosity=2',
+             '--rednose',
+             '--with-cov',
+             '--cov-report',
+             'term-missing']
