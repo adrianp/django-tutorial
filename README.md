@@ -11,6 +11,9 @@ $ mkdir src
 $ cd src
 $ git clone https://github.com/adrianp/django-tutorial.git
 $ cd django-tutorial
+$ cd django-polls
+$ python setup.py sdist
+$ cd ..
 $ pip install -r requirements.txt
 $ python manage.py migrate
 $ python manage.py createsuperuser
@@ -29,3 +32,7 @@ $ python manage.py runserver
 $ python manage.py shell_plus
 ```
 
+## Tests
+```
+$ python manage.py test polls
+```
